@@ -5,6 +5,25 @@ import (
 	grpctransport "github.com/go-kit/kit/transport/grpc"
 )
 
+// NewGRPCServer gets a new pb.VaultServer.
+func NewGRPCServer(ctx context.Context, endpoints Endpoints) pb.VaultServer {
+	return &grpcServer{
+		hash: grpctransport.NewServer(
+			ctx,
+			endpoints.HashEndpoint,
+			DecodeGRPCHashRequest,
+			EncodeGRPCHashResponse,
+		),
+		validate: grpctransport.NewServer(
+			ctx,
+			endpoints.ValidateEndpoint,
+			DecodeGRPCValidateRequest,
+			EncodeGRPCValidateResponse,
+		),
+	}
+}
+
+
 type grpcServer struct {
 	hash grpctransport.Handler
 	validate grpctransport.Handler
